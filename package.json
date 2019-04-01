@@ -1,7 +1,7 @@
 {
 	"name": "aws_profile_switcher",
 	"productName": "AWS Profile Switcher",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"license": "MIT",
 	"author": {
 		"name": "Eric Remigino",
