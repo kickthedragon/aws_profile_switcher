@@ -41,10 +41,10 @@ function showAbout() {
 
 async function refreshCredentials() {
 	try {
+		iniLoader.clearCachedFiles();
 		credentials = iniLoader.loadFrom();
 	} catch (err) {
 		log.error('Credential Load Error', err);
-		credentials = null;
 	}
 	if (credentials) {
 		let credentialsCopy = {};
