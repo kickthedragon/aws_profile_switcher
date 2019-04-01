@@ -75,7 +75,7 @@ async function refreshCredentials() {
 }
 
 app.on('ready', async () => {
-	app.dock.hide();
+	if (is.macos) app.dock.hide();
 	try {
 		await commandExists('aws');
 	} catch (err) {
