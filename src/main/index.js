@@ -35,17 +35,18 @@ async function switchProfile(profileName) {
 	await exec(`aws configure set aws_secret_access_key ${switchToProfile.aws_secret_access_key}`);
 }
 
-function showAbout() {
-	app.showAboutPanel();
-}
-
 async function refreshCredentials() {
 	try {
 		iniLoader.clearCachedFiles();
 		credentials = iniLoader.loadFrom();
 	} catch (err) {
 		log.error('Credential Load Error', err);
+		dialog.showErrorBox(
+			'Credential Load Error',
+			`${err.toString()}\n\n Fix your credentials file and then hit Refresh Profiles in the tray menu`
+		);
 	}
+	let cMenu = [];
 	if (credentials) {
 		let credentialsCopy = {};
 		for (let credential in credentials) {
@@ -53,30 +54,24 @@ async function refreshCredentials() {
 			credentialsCopy[credential] = credentials[credential];
 		}
 		selectedProfileName = _.findKey(credentialsCopy, { aws_access_key_id: credentials.default.aws_access_key_id });
-		let profiles = [];
 		for (let credential in credentialsCopy) {
 			if (credential == selectedProfileName)
-				profiles.push({ label: credential, type: 'radio', checked: true, click: switchProfile });
-			else profiles.push({ label: credential, type: 'radio', click: switchProfile });
+				cMenu.push({ label: credential, type: 'radio', checked: true, click: switchProfile });
+			else cMenu.push({ label: credential, type: 'radio', click: switchProfile });
 		}
-		profiles.push({ type: 'separator' });
-		profiles.push({ label: 'Refresh Profiles', type: 'normal', click: refreshCredentials });
-		profiles.push({ label: 'Check for Updates', type: 'normal', click: checkForUpdates });
-		if (process.platform == 'darwin')
-			profiles.push({ label: 'About AWS Profile Switcher', type: 'normal', click: showAbout });
-		profiles.push({ role: 'quit' });
-		const contextMenu = Menu.buildFromTemplate(profiles);
-		tray.setContextMenu(contextMenu);
-	} else {
-		let cMenu = [];
+		cMenu.push({ type: 'separator' });
 		cMenu.push({ label: 'Refresh Profiles', type: 'normal', click: refreshCredentials });
 		cMenu.push({ label: 'Check for Updates', type: 'normal', click: checkForUpdates });
-		if (process.platform == 'darwin')
-			cMenu.push({ label: 'About AWS Profile Switcher', type: 'normal', click: showAbout });
-		cMenu.push({ role: 'quit' });
-		const contextMenu = Menu.buildFromTemplate(cMenu);
-		tray.setContextMenu(contextMenu);
+		if (process.platform == 'darwin') cMenu.push({ label: 'About', type: 'normal', click: app.showAboutPanel });
+		cMenu.push({ label: 'Quit', type: 'normal', click: app.quit });
+	} else {
+		cMenu.push({ label: 'Refresh Profiles', type: 'normal', click: refreshCredentials });
+		cMenu.push({ label: 'Check for Updates', type: 'normal', click: checkForUpdates });
+		if (process.platform == 'darwin') cMenu.push({ label: 'About', type: 'normal', click: app.showAboutPanel });
+		cMenu.push({ label: 'Quit', type: 'normal', click: app.quit });
 	}
+	const contextMenu = Menu.buildFromTemplate(cMenu);
+	tray.setContextMenu(contextMenu);
 }
 
 app.on('ready', async () => {
