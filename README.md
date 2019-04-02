@@ -12,3 +12,6 @@ A simple tray app that sets your default aws profile credentials to another prof
 
 ![Screenshot1](https://raw.githubusercontent.com/kickthedragon/aws_profile_switcher/master/screenshots/Screenshot-3.png)
 ![Screenshot2](https://raw.githubusercontent.com/kickthedragon/aws_profile_switcher/master/screenshots/Screenshot-4.png)
+
+## License
+[MIT](https://github.com/kickthedragon/aws_profile_switcher/blob/master/LICENSE)
